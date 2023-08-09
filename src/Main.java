@@ -4,14 +4,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
         Canvas mainCanvas = new Canvas(1280, 720);
         Camera mainCamera = new Camera(Vertex3.zero(), Vertex3.zero());
-        double camSpeed = 0.1;
-        double camRotSpeed = 0.1;
+        double camSpeed = 10;
+        double camRotSpeed = 10;
         mainCanvas.init();
         mainCanvas.canvas.addKeyListener(new KeyListener() {
             @Override
@@ -150,19 +154,17 @@ public class Main {
         double focus = 0.1;
 
         Vertex2 displayPos[] = {
-                getDisplayPosition(apex[0], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[1], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[2], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[3], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[4], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[5], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[6], camera.position, camera.rotation, focus, 70, 70),
-                getDisplayPosition(apex[7], camera.position, camera.rotation, focus, 70, 70)
+                getDisplayPosition(apex[0], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[1], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[2], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[3], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[4], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[5], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[6], camera.position, camera.rotation, focus, 90, 70),
+                getDisplayPosition(apex[7], camera.position, camera.rotation, focus, 90, 70)
         };
 
-        for(int i = 0; i < 12; i++){
-            if(isLinesInter(displayPos[i], displayPos[i+1], 0, 1280));
-        }
+
 
         int xx[] = {(int) displayPos[0].x, (int) displayPos[1].x, (int) displayPos[2].x, (int) displayPos[3].x,
                 (int) displayPos[4].x, (int) displayPos[5].x, (int) displayPos[6].x, (int) displayPos[7].x};
@@ -177,9 +179,11 @@ public class Main {
             canvas.bufferedImageGraphics.fillOval(xx[i]-2, yy[i]-2, 4, 4);
         }
 
+
+
+
         int xx1[] = {xx[0], xx[1], xx[6], xx[3]};
         int yy1[] = {yy[0], yy[1], yy[6], yy[3]};
-        System.out.println(xx[1] + " " + yy[1]);
 
         int xx2[] = {xx[0], xx[3], xx[5], xx[2]};
         int yy2[] = {yy[0], yy[3], yy[5], yy[2]};
@@ -198,12 +202,12 @@ public class Main {
 
         canvas.bufferedImageGraphics.setColor(Color.black);
 
-        canvas.bufferedImageGraphics.drawPolygon(xx1, yy1, 4);
-        canvas.bufferedImageGraphics.drawPolygon(xx2, yy2, 4);
-        canvas.bufferedImageGraphics.drawPolygon(xx3, yy3, 4);
-        canvas.bufferedImageGraphics.drawPolygon(xx4, yy4, 4);
-        canvas.bufferedImageGraphics.drawPolygon(xx5, yy5, 4);
-        canvas.bufferedImageGraphics.drawPolygon(xx6, yy6, 4);
+        canvas.bufferedImageGraphics.drawPolygon(xx1, yy1, xx1.length);
+        canvas.bufferedImageGraphics.drawPolygon(xx2, yy2, xx2.length);
+        canvas.bufferedImageGraphics.drawPolygon(xx3, yy3, xx3.length);
+        canvas.bufferedImageGraphics.drawPolygon(xx4, yy4, xx4.length);
+        canvas.bufferedImageGraphics.drawPolygon(xx5, yy5, xx5.length);
+        canvas.bufferedImageGraphics.drawPolygon(xx6, yy6, xx6.length);
     }
 
     public static Vertex2 getDisplayPosition(Vertex3 dotPosition, Vertex3 cameraPosition, Vertex3 cameraRotation, double focus, double alpha, double beta){
@@ -228,6 +232,13 @@ public class Main {
         double betaRad = Math.toRadians(beta);
 
         double distance = getDistance(cameraPosition, dotPosition);
+
+        if(rotatedPos.x < 0){
+            return new Vertex2(0, 0);
+        }
+        if(rotatedPos.y <= -distance*betaRad || rotatedPos.y >= distance*betaRad){
+            return new Vertex2(0, 0);
+        }
 
         Vertex3 planePos = new Vertex3(0, 0, 10);
 
